@@ -1,29 +1,29 @@
+// import { Request, Response } from 'express';
+// import * as signupService from '../services/signupServices';
+
+// interface CreateUserInput extends Request {
+//     body: signupService.CreateUserInput;
+// }
+
+// export const createUser = async (req: CreateUserInput, res: Response) => {
+//     try {
+//         const newUser = await signupService.createUser(req.body);
+
+//         res.status(201).send(newUser);
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).send({ message: 'Something went wrong' });
+//     }
+// }
+
 import { Request, Response } from 'express';
-import { userModel } from '../models/models';
+import { UserService } from '../services/signupServices';
+import UserModel, { UserCreate } from '../models/models';
 
 export const createUser = async (req: Request, res: Response) => {
     try {
-        const {
-            firstName,
-            lastName,
-            birhtDate,
-            city,
-            country,
-            email,
-            password,
-            confirmPassword,
-        } = req.body;
-
-        const newUser = await userModel.create({
-            firstName,
-            lastName,
-            birhtDate,
-            city,
-            country,
-            email,
-            password,
-            confirmPassword,
-        });
+        const userData: UserCreate = req.body;
+        const newUser = await UserService.createUser(userData);
 
         res.status(201).json({
             message: 'User created successfully',
