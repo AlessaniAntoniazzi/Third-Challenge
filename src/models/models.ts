@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import bcrypt from 'bcrypt';
 
 export interface UserCreate {
     firstName: string;
@@ -11,7 +12,9 @@ export interface UserCreate {
     confirmPassword: string;
 }
 
-export interface UserModel extends UserCreate, Document {}
+export interface UserModel extends UserCreate, Document {
+    comparePassword(password: string): Promise<boolean>;
+}
 
 const userSchema = new Schema<UserModel>({
     firstName: { type: String, required: true },
@@ -24,9 +27,12 @@ const userSchema = new Schema<UserModel>({
     confirmPassword: { type: String, required: true },
 });
 
+userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
+    return bcrypt.compare(candidatePassword, this.password);
+};
 export default mongoose.model<UserModel>('User', userSchema);
 
-export interface UserLogin {
-    email: string;
-    password: string;
-}
+// export interface UserLogin {
+//     email: string;
+//     password: string;
+// };

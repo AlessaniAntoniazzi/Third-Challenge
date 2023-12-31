@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { UserService } from '../services/signupServices';
-import UserModel, { UserCreate, UserLogin } from '../models/models';
+import { UserService } from '../services/userServices';
+import UserModel, { UserCreate } from '../models/models';
 
 export const createUser = async (req: Request, res: Response) =>{
         try {

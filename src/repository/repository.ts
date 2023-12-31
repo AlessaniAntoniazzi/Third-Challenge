@@ -10,4 +10,11 @@ export class UserRepository {
     static async findByEmail(email: string): Promise<IUserModel | null> {
         return UserModel.findOne({ email });
     }
+
+    static async verifyPassword(user: IUserModel, password: string): Promise<boolean> {
+        if (!user) {
+            return false;
+        }
+        return user.comparePassword(password);
+    }
 }
