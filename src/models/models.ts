@@ -25,3 +25,8 @@ const userSchema = new Schema<UserModel>({
 });
 
 export default mongoose.model<UserModel>('User', userSchema);
+
+export interface UserLogin {
+    email: string;
+    password: string;
+}
