@@ -2,11 +2,16 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UserRepository } from '../repository/repository';
 import UserModel, { UserCreate, UserModel as IUserModel} from '../models/models';
+import { createUserSchema } from '../middleware/createUserSchema';
+import { validatePassword } from '../middleware/createUserSchema';
 
 export class UserService {
     static async createUser(userProps: UserCreate): Promise<IUserModel> {
-        const { password, confirmPassword, ...restUserProps } = userProps;
-        const hashedPassword = await bcrypt.hash(userProps.password, 10);
+        const validatedUserProps = await createUserSchema.validateAsync(userProps);
+        validatePassword(validatedUserProps.password);
+
+        const { password, confirmPassword, ...restUserProps } = validatedUserProps;
+        const hashedPassword = await bcrypt.hash(password, 10);
         const hashedConfirmPassword = await bcrypt.hash(confirmPassword, 10);
 
         const user = await UserRepository.createUser({
