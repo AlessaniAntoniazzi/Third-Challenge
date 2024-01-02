@@ -2,8 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UserRepository } from '../repository/repository';
 import UserModel, { UserCreate, UserModel as IUserModel} from '../models/models';
-import { createUserSchema } from '../middleware/createUserSchema';
-import { validatePassword } from '../middleware/createUserSchema';
+import { createUserSchema, validatePassword } from '../middleware/createUserSchema';
 
 export class UserService {
     static async createUser(userProps: UserCreate): Promise<IUserModel> {
@@ -40,8 +39,8 @@ export class UserService {
     }
 
     private static generateToken(user: IUserModel): string {
-        const secretKey = 'your-secret-key';
-        const expiresIn = '1h';
+        const secretKey = process.env.JWT_SECRET as string ;
+        const expiresIn = '30d';
         const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn });
         return token;
     }
