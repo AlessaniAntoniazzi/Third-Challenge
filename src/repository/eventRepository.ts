@@ -6,6 +6,7 @@ export class EventRepository {
     const savedEvent = await newEvent.save();
     return savedEvent.toObject() as IEventModel;
   }
+
   static async getEvents(userId: string): Promise<IEventModel[]> {
     const events = await EventModel.find({ userId });
     return events;
@@ -14,4 +15,7 @@ export class EventRepository {
     throw new Error('Could not retrieve events');
   }
 
+  static async deleteEventsByDayOfWeek(userId: string, dayOfWeek: string): Promise<void> {
+    await EventModel.deleteMany({ userId, dayOfWeek });
+  }
 };

@@ -25,4 +25,13 @@ export class EventService {
       throw new Error('Could not retrieve events');
     }
   }
+
+  static async deleteEventsByDayOfWeek(userId: string, dayOfWeek: string): Promise<void> {
+    try {
+      await EventRepository.deleteEventsByDayOfWeek(userId, dayOfWeek);
+    } catch (error) {
+      console.error('Error deleting events:', error);
+      throw new Error('Could not delete events');
+    }
+  }
 };
