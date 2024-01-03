@@ -22,27 +22,7 @@ export const createEvent = async (req: Request, res: Response) => {
     }
   };
 
-  export const getEvents = async (req: Request, res: Response) => {
-    try {
-      const userId = req.userId;
-  
-      if (userId === undefined || typeof userId !== 'string') {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
-
-      const events = await EventService.getEvents(userId);
-  
-      res.status(200).json({
-        message: 'Events retrieved successfully',
-        events,
-      });
-    } catch (error: any) {
-      console.error('Error getting events:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    }
-  };
-
-  export const deleteEventsByDayOfWeek = async (req: Request, res: Response) => {
+  export const getEventsByDayOfWeek = async (req: Request, res: Response) => {
     try {
       const { dayOfWeek } = req.query;
       const userId = req.userId;
@@ -52,7 +32,32 @@ export const createEvent = async (req: Request, res: Response) => {
       }
   
       if (dayOfWeek === undefined || typeof dayOfWeek !== 'string') {
-        return res.status(400).json({ error: 'dayOfWeek parameter is required' });
+        return res.status(400).json({ error: 'dayOfWeek parameter is required in the query parameters' });
+      }
+  
+      const events = await EventService.getEvents(userId, dayOfWeek);
+  
+      res.status(200).json({
+        message: `Events for ${dayOfWeek} retrieved successfully`,
+        events,
+      });
+    } catch (error: any) {
+      console.error('Error getting events:', error);
+      res.status(400).json({ error: error.message });
+    }
+  };
+
+  export const deleteEventsByDayOfWeek = async (req: Request, res: Response) => {
+    try {
+      const { dayOfWeek } = req.body; 
+      const userId = req.userId;
+  
+      if (userId === undefined || typeof userId !== 'string') {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+  
+      if (dayOfWeek === undefined || typeof dayOfWeek !== 'string') {
+        return res.status(400).json({ error: 'dayOfWeek parameter is required in the request body' });
       }
   
       await EventService.deleteEventsByDayOfWeek(userId, dayOfWeek);

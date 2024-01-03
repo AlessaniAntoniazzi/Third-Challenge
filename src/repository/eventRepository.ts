@@ -1,3 +1,4 @@
+import DayOfWeek from '../models/dayOfWeek';
 import EventModel, { EventModel as IEventModel } from '../models/eventModel';
 
 export class EventRepository {
@@ -8,11 +9,22 @@ export class EventRepository {
   }
 
   static async getEvents(userId: string): Promise<IEventModel[]> {
-    const events = await EventModel.find({ userId });
+    try {
+      const query: any = {userId};
+      if (DayOfWeek){
+        query.dayOfWeek = DayOfWeek;
+      }
+      const events = await EventModel.find({ userId });
+      return events;
+    } catch (error) {
+      console.error('Error getting events:', error);
+      throw new Error('Could not retrieve events');
+    }
+  }
+
+  static async getEventsByDayOfWeek(userId: string, dayOfWeek: string): Promise<IEventModel[]> {
+    const events = await EventModel.find({ userId, dayOfWeek });
     return events;
-  } catch (error: any) {
-    console.error('Error getting events:', error);
-    throw new Error('Could not retrieve events');
   }
 
   static async deleteEventsByDayOfWeek(userId: string, dayOfWeek: string): Promise<void> {

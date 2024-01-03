@@ -3,6 +3,7 @@ import EventModel, { EventModel as IEventModel } from '../models/eventModel';
 import DayOfWeek from '../models/dayOfWeek';
 
 export class EventService {
+  
   static async createEvent(description: string, dayOfWeek: string, userId: string): Promise<IEventModel> {
     if (!Object.values(DayOfWeek).includes(dayOfWeek as DayOfWeek))  {
       throw new Error('Invalid day of week');
@@ -16,15 +17,19 @@ export class EventService {
   }
   }
 
-  static async getEvents(userId: string): Promise<IEventModel[]> {
+  static async getEvents(userId: string, dayOfWeek?: string): Promise<IEventModel[]> {
     try {
-      const events = await EventRepository.getEvents(userId);
-      return events;
+      if (dayOfWeek) {
+        return EventRepository.getEventsByDayOfWeek(userId, dayOfWeek);
+      } else {
+        return EventRepository.getEvents(userId);
+      }
     } catch (error) {
       console.error('Error getting events:', error);
       throw new Error('Could not retrieve events');
     }
   }
+
 
   static async deleteEventsByDayOfWeek(userId: string, dayOfWeek: string): Promise<void> {
     try {
@@ -34,4 +39,5 @@ export class EventService {
       throw new Error('Could not delete events');
     }
   }
+
 };
