@@ -14,5 +14,15 @@ export class EventService {
     console.error('Error creating event:', error);
     throw new Error('Could not create event');
   }
-}
+  }
+
+  static async getEvents(userId: string): Promise<IEventModel[]> {
+    try {
+      const events = await EventRepository.getEvents(userId);
+      return events;
+    } catch (error) {
+      console.error('Error getting events:', error);
+      throw new Error('Could not retrieve events');
+    }
+  }
 };

@@ -21,3 +21,23 @@ export const createEvent = async (req: Request, res: Response) => {
       res.status(400).json({ error: error.message });
     }
   };
+
+  export const getEvents = async (req: Request, res: Response) => {
+    try {
+      const userId = req.userId;
+  
+      if (userId === undefined || typeof userId !== 'string') {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const events = await EventService.getEvents(userId);
+  
+      res.status(200).json({
+        message: 'Events retrieved successfully',
+        events,
+      });
+    } catch (error: any) {
+      console.error('Error getting events:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
