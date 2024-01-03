@@ -41,4 +41,9 @@ export class EventRepository {
       throw new Error('Could not retrieve event by ID');
     }
   }
+
+  static async deleteEventById(eventId: string): Promise<void> {
+  await EventModel.findByIdAndDelete(eventId);
+  }
+  
 };

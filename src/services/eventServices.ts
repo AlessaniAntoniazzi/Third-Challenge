@@ -49,5 +49,13 @@ export class EventService {
     }
   }
 
+  static async deleteEventById(eventId: string): Promise<void> {
+    try {
+      await EventRepository.deleteEventById(eventId);
+    } catch (error) {
+      console.error('Error deleting event by ID:', error);
+      throw new Error('Could not delete event by ID');
+    }
+  }
 };
 

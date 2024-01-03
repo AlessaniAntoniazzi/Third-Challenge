@@ -94,3 +94,22 @@ export const getEventById = async (req: Request, res: Response) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+export const deleteEventById = async (req: Request, res: Response) => {
+  try {
+    const { eventId } = req.params;
+
+    if (!eventId) {
+      return res.status(400).json({ error: 'Event ID is required in the params' });
+    }
+
+    await EventService.deleteEventById(eventId);
+
+    res.status(200).json({
+      message: `Event with ID ${eventId} deleted successfully`,
+    });
+  } catch (error: any) {
+    console.error('Error deleting event by ID:', error);
+    res.status(400).json({ error: error.message });
+  }
+};
