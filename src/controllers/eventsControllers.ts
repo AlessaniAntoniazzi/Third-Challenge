@@ -49,7 +49,7 @@ export const getEventsByDayOfWeek = async (req: Request, res: Response) => {
 
 export const deleteEventsByDayOfWeek = async (req: Request, res: Response) => {
     try {
-      const { dayOfWeek } = req.body; 
+      const { dayOfWeek } = req.query; 
       const userId = req.userId;
   
       if (userId === undefined || typeof userId !== 'string') {
