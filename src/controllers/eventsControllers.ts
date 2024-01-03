@@ -20,9 +20,9 @@ export const createEvent = async (req: Request, res: Response) => {
       console.error('Error creating event:', error);
       res.status(400).json({ error: error.message });
     }
-  };
+};
 
-  export const getEventsByDayOfWeek = async (req: Request, res: Response) => {
+export const getEventsByDayOfWeek = async (req: Request, res: Response) => {
     try {
       const { dayOfWeek } = req.query;
       const userId = req.userId;
@@ -45,9 +45,9 @@ export const createEvent = async (req: Request, res: Response) => {
       console.error('Error getting events:', error);
       res.status(400).json({ error: error.message });
     }
-  };
+};
 
-  export const deleteEventsByDayOfWeek = async (req: Request, res: Response) => {
+export const deleteEventsByDayOfWeek = async (req: Request, res: Response) => {
     try {
       const { dayOfWeek } = req.body; 
       const userId = req.userId;
@@ -69,4 +69,28 @@ export const createEvent = async (req: Request, res: Response) => {
       console.error('Error deleting events:', error);
       res.status(400).json({ error: error.message });
     }
-  };
+};
+
+export const getEventById = async (req: Request, res: Response) => {
+  try {
+    const { eventId } = req.params;
+  
+    if (!eventId) {
+      return res.status(400).json({ error: 'Event ID is required in the params' });
+    }
+  
+    const event = await EventService.getEventById(eventId);
+  
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+  
+    res.status(200).json({
+      message: 'Event retrieved successfully',
+      event,
+    });
+  } catch (error: any) {
+    console.error('Error getting event by ID:', error);
+    res.status(400).json({ error: error.message });
+  }
+};

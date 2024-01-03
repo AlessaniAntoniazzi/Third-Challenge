@@ -30,7 +30,6 @@ export class EventService {
     }
   }
 
-
   static async deleteEventsByDayOfWeek(userId: string, dayOfWeek: string): Promise<void> {
     try {
       await EventRepository.deleteEventsByDayOfWeek(userId, dayOfWeek);
@@ -40,4 +39,15 @@ export class EventService {
     }
   }
 
+  static async getEventById(eventId: string): Promise<IEventModel | null> {
+    try {
+      const event = await EventRepository.getEventById(eventId);
+      return event;
+    } catch (error) {
+      console.error('Error getting event by ID:', error);
+      throw new Error('Could not retrieve event by ID');
+    }
+  }
+
 };
+
