@@ -131,8 +131,8 @@ export const getEventById = async (req: Request, res: Response) => {
   
     if (!event) {
       return res.status(404).json({ 
-        error: 'Event not found',
-        message: 'Event not found'
+        error: 'Not found',
+        message: 'Not found'
       });
     }
   
@@ -159,8 +159,8 @@ export const deleteEventById = async (req: Request, res: Response) => {
 
     await EventService.deleteEventById(eventId);
 
-    res.status(200).json({
-      message: `Event with ID ${eventId} deleted successfully`,
+    res.status(204).json({
+      message: `Event deleted`,
     });
   } catch (error: any) {
     console.error('Error getting events:', error);

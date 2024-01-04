@@ -10,7 +10,7 @@ router.post('/users/sign-in', loginUser);
 router.post('/events', authMiddleware, createEvent);
 router.get('/events', authMiddleware, getEventsByDayOfWeek);
 router.delete('/events', authMiddleware, deleteEventsByDayOfWeek);
-router.get('/events/:eventId', getEventById);
+router.get('/events/:eventId', authMiddleware, getEventById);
 router.delete('/events/:eventId', authMiddleware, deleteEventById); 
 
 export default router;
