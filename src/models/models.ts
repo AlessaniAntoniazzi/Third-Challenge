@@ -27,8 +27,10 @@ const userSchema = new Schema<UserModel>({
     confirmPassword: { type: String, required: true },
 });
 
+userSchema.index({ email: 1 }, { unique: true });
+
 userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
     return bcrypt.compare(candidatePassword, this.password);
 };
-export default mongoose.model<UserModel>('User', userSchema);
 
+export default mongoose.model<UserModel>('User', userSchema);

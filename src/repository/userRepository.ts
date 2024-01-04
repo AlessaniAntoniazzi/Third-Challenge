@@ -12,9 +12,10 @@ export class UserRepository {
     }
 
     static async verifyPassword(user: IUserModel, password: string): Promise<boolean> {
-        if (!user) {
+        if (!user?.password) {
             return false;
         }
+
         return user.comparePassword(password);
     }
 }
