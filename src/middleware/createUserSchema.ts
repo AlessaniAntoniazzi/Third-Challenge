@@ -18,4 +18,9 @@ export const validatePassword = (password: string) => {
     return createUserSchema.validate({ password });
   };
 
+  export const signInSchema = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  });
   
+  export const validateSignIn = (data: any) => signInSchema.validateAsync(data);

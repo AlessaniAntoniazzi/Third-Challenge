@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { EventService } from "../services/eventServices";
+import { validateEvent } from "../middleware/eventsSchema";
+import { ValidationError } from "joi";
 
 export const createEvent = async (req: Request, res: Response) => {
     try {
@@ -12,7 +14,8 @@ export const createEvent = async (req: Request, res: Response) => {
           message: 'Not Authenticated'
          });
       }
-  
+      await validateEvent({ description, dayOfWeek, userId });
+
       const newEvent = await EventService.createEvent( description, dayOfWeek, userId);
   
       res.status(200).json({
@@ -20,16 +23,18 @@ export const createEvent = async (req: Request, res: Response) => {
         event: newEvent,
       });
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      if (error instanceof ValidationError) {
+        return res.status(400).json({
+          error: 'Bad Request',
+          message: error.details.map((detail) => detail.message).join(', '),
+        });
+      } else {
+      res.status(500).json({
+        error: 'Internal Server Error',
+        message: 'Something went wrong',
+      })
     }
-    res.status(401).json({
-      error: 'Unauthorized',
-      message: 'Not Authenticated',
-    }) 
-    res.status(500).json({
-      error: 'Internal Server Error',
-      message: 'Something went wrong',
-    })
+  }
 
 };
 
@@ -50,65 +55,69 @@ export const getEventsByDayOfWeek = async (req: Request, res: Response) => {
           error: 'Invalid data supplied' 
         });
       }
+
   
       const events = await EventService.getEvents(userId, dayOfWeek);
+
+      if (!events || events.length === 0) {
+        return res.status(404).json({
+          error: 'Not Found',
+          message: 'Not found',
+        });
+      }
   
       res.status(200).json({
         message: 'Successful operation',
         events,
       });
     } catch (error: any) {
-      res.status(400).json({ 
-        error: 	'Invalid data supplied'
+      console.error('Error getting events:', error);
+      res.status(500).json({
+        error: 'Internal Server Error',
+        message: 'Something went wrong',
       });
-    } 
-    res.status(404).json({
-      error: 'Not Found',
-      message: 'Not found',
-    })
-    res.status(500).json({
-      error: 'Internal Server Error',
-      message: 'Something went wrong',
-    })
+    }
 };
 
 export const deleteEventsByDayOfWeek = async (req: Request, res: Response) => {
     try {
-      const { dayOfWeek } = req.body; 
+      const { dayOfWeek } = req.query; 
       const userId = req.userId;
   
-      if (userId === undefined || typeof userId !== 'string') {
+      if (!userId ||  typeof userId !== 'string') {
         return res.status(401).json({ 
           error: 'Unauthorized',
           message: 'Not Authenticated' 
         })
       }
-  
+      
+      const deletedEvents = await EventService.deleteEventsByDayOfWeek(userId, dayOfWeek as string);
+
+      if (!deletedEvents || deletedEvents.length === 0) {
+        return res.status(404).json({
+          error: 'Not Found',
+          message: 'Not Found',
+        });
+      }
+
       if (dayOfWeek === undefined || typeof dayOfWeek !== 'string') {
         return res.status(400).json({ error: 'Invalid data supplied' });
       }
   
-      await EventService.deleteEventsByDayOfWeek(userId, dayOfWeek);
-  
       res.status(200).json({
         message: 'List of deleteDailyEvents',
+        deletedEvents,
       });
+
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
-    } 
-    res.status(401).json({
-      error: 'Unauthorized',
-      message: 'Not Authenticated',
-    })
-    res.status(404).json({
-      error: 'Not Found',
-      message: 'Not found',
-    })
+    console.error('Error getting events:', error);
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Something went wrong',
-    })
-};
+    });
+  }
+} 
+
 
 export const getEventById = async (req: Request, res: Response) => {
   try {
@@ -132,7 +141,11 @@ export const getEventById = async (req: Request, res: Response) => {
       event,
     });
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    console.error('Error getting events:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Something went wrong',
+    });
   }
 };
 
@@ -150,7 +163,10 @@ export const deleteEventById = async (req: Request, res: Response) => {
       message: `Event with ID ${eventId} deleted successfully`,
     });
   } catch (error: any) {
-    console.error('Error deleting event by ID:', error);
-    res.status(400).json({ error: error.message });
+    console.error('Error getting events:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Something went wrong',
+    });
   }
 };

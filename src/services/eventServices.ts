@@ -30,15 +30,15 @@ export class EventService {
     }
   }
 
-  static async deleteEventsByDayOfWeek(userId: string, dayOfWeek: string): Promise<void> {
+  static async deleteEventsByDayOfWeek(userId: string, dayOfWeek: string): Promise<IEventModel[]> {
     try {
-      await EventRepository.deleteEventsByDayOfWeek(userId, dayOfWeek);
+      const deletedEvents = await EventRepository.deleteEventsByDayOfWeek(userId, dayOfWeek);
+      return deletedEvents;
     } catch (error) {
       console.error('Error deleting events:', error);
       throw new Error('Could not delete events');
     }
   }
-
   static async getEventById(eventId: string): Promise<IEventModel | null> {
     try {
       const event = await EventRepository.getEventById(eventId);

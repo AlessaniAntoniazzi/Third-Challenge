@@ -27,8 +27,17 @@ export class EventRepository {
     return events;
   }
 
-  static async deleteEventsByDayOfWeek(userId: string, dayOfWeek: string): Promise<void> {
-    await EventModel.deleteMany({ userId, dayOfWeek });
+  static async deleteEventsByDayOfWeek(userId: string, dayOfWeek: string): Promise<IEventModel[]> {
+    try {
+     const query: any = {userId, dayOfWeek};
+     const events = await EventModel.find(query);
+     await EventModel.deleteMany(query);
+     return events;
+    } catch (error) {
+      console.error('Error getting events:', error);
+      throw new Error('Could not retrieve events');
+    }
+
   }
 
   static async getEventById(eventId: string): Promise<IEventModel | null> {
