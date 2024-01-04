@@ -16,7 +16,10 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     const token = authHeader?.replace('Bearer ', '');
     console.log(token);
     if (!token) {
-      return res.status(401).json({ error: 'Token not provided' });
+      return res.status(401).json({ 
+      error: "Unauthorized",
+      message: "Not Authenticated" 
+    });
     }
   
     try {
@@ -25,7 +28,10 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
       next();
     } catch (error) {
         console.log(error);
-      return res.status(401).json({ error: 'Invalid token' });
+      return res.status(401).json({
+        error: "Unauthorized",
+        message: "Not Authenticated" 
+      });
 
     }
   };
