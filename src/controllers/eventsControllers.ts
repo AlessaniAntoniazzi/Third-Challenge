@@ -135,7 +135,14 @@ export const getEventById = async (req: Request, res: Response) => {
         message: 'Not found'
       });
     }
-  
+    
+    if (event.userId !== req.userId) {
+        return res.status(401).json({ 
+          error: 'Unauthorized',
+          message: 'Not Authenticated'
+      });
+    }
+
     res.status(200).json({
       message: 'Successful operation',
       event,
@@ -157,6 +164,22 @@ export const deleteEventById = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Event ID is required in the params' });
     }
 
+    const event = await EventService.getEventById(eventId);
+
+    if (!event) {
+      return res.status(404).json({ 
+        error: 'Not found',
+        message: 'Event not found'
+      });
+    }
+
+    if (event.userId !== req.userId) {
+      return res.status(401).json({ 
+        error: 'Unauthorized',
+        message: 'Not Authenticated'
+    });
+    }
+    
     await EventService.deleteEventById(eventId);
 
     res.status(204).json({
