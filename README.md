@@ -36,18 +36,31 @@ http://localhost:3000
 
 ##Routes:
 Post - User sign-up:
+
 http://localhost:3000/users/sign-up
+
 Post - User sign-in
+
 http://localhost:3000/users/sign-in
+
 POST - Create an Event
+
 http://localhost:3000/events
+
 GET - Get events by the day of the week
+
 http://localhost:3000/events?<insert-the-dayofweek>
+
 DELETE - Delete events by the day of the week
+
 http://localhost:3000/events?<insert-the-dayofweek>
+
 GET - Get events by the id
+
 http://localhost:3000/events/<insert-the-id>
+
 DELETE - Delete events by id
+
 http://localhost:3000/events/<insert-the-id>
 
 *After you sign-in, you have to insert the token in the Authorization, in order to deal with events
